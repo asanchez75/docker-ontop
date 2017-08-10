@@ -14,13 +14,12 @@ mkdir -p $ONTOPVOLUME/openrdf-workbench
 
 chown -R tomcat7:tomcat7 $ONTOPVOLUME
 
-if [ -f /data/sqljdbc4.jar ] ; then
-	# make the jdbc driver globably available for all webapps
-	cd /usr/share/tomcat7/lib
-	ln -s /data/sqljdbc4.jar
-else 
-	echo "WARNING: missing Microsoft JDBC driver"
-        echo "See https://msdn.microsoft.com/en-us/library/mt683464%28v=sql.110%29.aspx"
-        # redistribution is not possible on github: https://msdn.microsoft.com/en-us/sqlserver/jj589698
-fi
-
+for file in $ONTOPVOLUME/lib
+do
+  if [[ -f $file ]] && [[ "$file" == *"jar"* ]] ; then
+  # make the jdbc driver globably available for all webapps
+    echo ${file##*/}
+    cd /usr/share/tomcat7/lib
+    ln -s /data/${file##*/}
+  fi
+done
